@@ -34,9 +34,9 @@ predict and reason about program efficiency.  One important way it
 accomplishes this is by allowing fine-grained control over memory
 representations, with direct support for stack allocation and
 contiguous record storage.  The language balances such controls with
-the absolute reqirement for safety: Rust's type system and runtime
-guarantee the absence of data races, buffer overflows, stack overflow,
-or access to uninitialized or deallocated memory.
+the absolute requirement for safety: Rust's type system and runtime
+guarantee the absence of data races, buffer overflows, stack overflows,
+and accesses to uninitialized or deallocated memory.
 
 In this demonstration, we will briefly review the language features
 that Rust leverages to accomplish the above goals, focusing in
@@ -46,17 +46,21 @@ for programmers to reason about, and maintain the above safety
 property.
 
 If time permits, we will also show the current state of \emph{Servo},
-Mozilla's research web browser implemented in Rust.
+Mozilla's research web browser that is implemented in Rust.
+
+\keywords{Rust, Systems programming, Memory management, Affine type systems}
 
 \section{Demonstration Outline}
 
-The planned topics for the demonstration include:
+{}
+
+Planned topics for the demonstration include:
 \begin{itemize}
 \item Memory safety in Rust
 \item Ownership and linear types
 \begin{itemize}
 \item Data Allocation
-\item Deallocation and (User-defined) Destructors
+\item Deallocation and (user-defined) Destructors
 \item Inherited mutability
 \item Moving and sending data
 \end{itemize}
@@ -68,7 +72,7 @@ The planned topics for the demonstration include:
 \item Discussion of design space
 \begin{itemize}
 \item Comparison against other work
-\item Moving values based on type, vs syntactic move keyword
+\item Moving values based on type, vs {\tt move} keyword
 \item Linear mutable values
 \item Lexically scoped lifetimes
 \end{itemize}
