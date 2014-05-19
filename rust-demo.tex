@@ -1,0 +1,76 @@
+\documentclass{acm_proc_article-sp}
+
+\begin{document}
+\title{Demo: The Rust Language and Type System}
+\numberofauthors{2}
+\author{
+% 1st. author
+\alignauthor
+Felix S. Klock II\\
+    \affaddr{Mozilla Research}\\
+    \email{pnkfelix@mozilla.com}
+% 2nd. author
+\alignauthor
+Nicholas Matsakis\\
+    \affaddr{Mozilla Research}\\
+    \email{nmatsakis@mozilla.com}
+}
+\maketitle
+
+\section{Abstract}
+
+\emph{Rust} is a new programming language for developing reliable and
+efficient systems.  It is designed to support concurrency and
+parallelism in building applications and libraries that take full
+advantage of modern hardware.
+ Rust's static type system is safe\footnote{Type soundness has not
+  yet been formally proven for Rust, but type soundness is an
+  explicit design goal for the language.} and expressive
+and provides strong guarantees about isolation,
+concurrency, and memory safety.
+
+Rust also offers a clear performance model, making it easier to
+predict and reason about program efficiency.  One important way it
+accomplishes this is by allowing fine-grained control over memory
+representations, with direct support for stack allocation and
+contiguous record storage.  The language balances such controls with
+the absolute reqirement for safety: Rust's type system and runtime
+guarantee the absence of data races, buffer overflows, stack overflow,
+or access to uninitialized or deallocated memory.
+
+In this demonstration, we will briefly review the language features
+that Rust leverages to accomplish the above goals, focusing in
+particular on Rust's advanced type system, and then show a collection
+of concrete examples of program subroutines that are efficient, easy
+for programmers to reason about, and maintain the above safety
+property.
+
+If time permits, we will also show the current state of \emph{Servo},
+Mozilla's research web browser implemented in Rust.
+
+\section{Demonstration Outline}
+
+The planned topics for the demonstration include:
+\begin{itemize}
+\item Memory safety in Rust
+\item Ownership and linear types
+\begin{itemize}
+\item Data Allocation
+\item Deallocation and (User-defined) Destructors
+\item Inherited mutability
+\item Moving and sending data
+\end{itemize}
+\item Borrowing and freezing of mutable data structures
+\begin{itemize}
+\item The necessity of (controlled, temporary) aliasing
+\item Explicit and implicit lifetime parameters
+\end{itemize}
+\item Discussion of design space
+\begin{itemize}
+\item Comparison against other work
+\item Moving values based on type, vs syntactic move keyword
+\item Linearity values
+\item Lexically scoped lifetimes
+\end{itemize}
+\end{itemize}
+\end{document}
