@@ -52,7 +52,63 @@ Mozilla's research web browser that is implemented in Rust.
 
 \section{Demonstration Outline}
 
-{}
+Rust shares several features with the ML family of languages,
+such as algebraic data types and parametric polymorphism.  The syntax
+and semantics for simple Rust programs can be explained via
+analogy with corresponding ML programs.
+
+However, Rust also deviates from ML in a number of ways.  For this
+demonstration, we will be focusing on Rust's approach to managing
+memory, which is quite different from that of ML.
+In Rust, one can allocate objects inline within other objects; also, a
+Rust program may also work with (potentially mutable) references into the
+middle of allocated blocks of memory, \emph{including} blocks that represent
+particular variants of an algebraic type.
+%\footnote{One can also program using types analogous to ML's {\tt ref} and arrays.}
+%
+%This introduces the potential for references that alias each other in non-obvious ways.
+This introduces the potential for non-local and non-obvious aliasing.
+
+To control aliasing and ensure type soundness, Rust uses an affine
+type system that tracks ownership.  The unique owner of an object can
+hand that ownership off to new owner; but the owner may instead hand
+off {\em borrowed references} to (or into) the object.  These
+so-called \emph{borrows} obey lexical scope, ensuring that when the
+original reference goes out of scope, there will not be any
+outstanding borrowed references to the object (otherwise known as
+``dangling pointers'').  This also implies that when the owner goes
+out of scope or is otherwise deallocated, the referenced object can be
+deallocated at the same time. Rust takes advantage of this property by
+supporting user-defined destructors, enabling RAII\footnote{%
+RAII: ``Resource Acquisition Is Initialization''}
+patterns popularized by C++.
+
+There are two flavors of borrows: mutable and immutable.
+Mut\-able references have a uniqueness property:
+There can be at
+most one active mutable borrow of a given piece of state (the owner
+itself is not allowed to mutate the object for the duration of the
+mutable borrow, nor are any of the inactive mutable borrows).
+Immutable references, on the other hand,
+can be freely copied and their referents can be the source for new
+immutable borrows (subject to the restriction that all the borrows
+still respect the lexical scope of the object's owner).
+
+Rust functions can manipulate objects that are owned by local
+variables arbitrarily far up the control stack.  Such functions need to
+support operations like {\tt *ptr1 = *ptr2;} (writing the dereferenced
+value of {\tt ptr2} into the memory referenced by {\tt ptr1}), but must
+also respect the rules: such assignment statements
+must be prohibited from injecting dangling pointers.
+
+Such functions need explicitly constrain their inputs
+that ensure that their execution will not break the rules.
+%
+Rust has an optional explicit syntax for describing the {\em lifetime}
+bounds associated with a reference, which mixes with {\em
+  lifetime-polymorphism} (analogous to {\em type-polymorphism}) to
+provide functions the expressive power they need to manipulate
+references, without breaking type safety.
 
 Planned topics for the demonstration include:
 \begin{itemize}
