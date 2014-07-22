@@ -50,7 +50,7 @@ Mozilla's research web browser that is implemented in Rust.
 
 \keywords{Rust, Systems programming, Memory management, Affine type systems}
 
-\section{Demonstration Outline}
+\section{Memory Manipulation in Rust}
 
 Rust shares several features with the ML family of languages,
 such as algebraic data types and parametric polymorphism.  The syntax
@@ -58,16 +58,18 @@ and semantics for simple Rust programs can be explained via
 analogy with corresponding ML programs.
 
 However, Rust also deviates from ML in a number of ways.  For this
-demonstration, we will be focusing on Rust's approach to managing
+demonstration, we will focus on Rust's approach to managing
 memory, which is quite different from that of ML.
-In Rust, one can allocate objects inline within other objects; also, a
-Rust program may also work with (potentially mutable) references into the
+In Rust, one can allocate objects inline within other objects;
+also, a Rust program may work with (potentially mutable) references into the
 middle of allocated blocks of memory, \emph{including} blocks that represent
 particular variants of an algebraic type.
-%\footnote{One can also program using types analogous to ML's {\tt ref} and arrays.}
-%
-%This introduces the potential for references that alias each other in non-obvious ways.
-This introduces the potential for non-local and non-obvious aliasing.
+This introduces the potential for non-local aliasing;
+such aliasing, if left unconstrained, would yield type soundness holes.%
+\footnote{One can also express ref-cells (ML's {\tt ref}) and
+  arrays of boxed values in Rust; however, inline
+  allocation and interior pointers are important systems
+  programming features.}
 
 To control aliasing and ensure type soundness, Rust uses an affine
 type system that tracks ownership.  The unique owner of an object can
@@ -78,10 +80,10 @@ original reference goes out of scope, there will not be any
 outstanding borrowed references to the object (otherwise known as
 ``dangling pointers'').  This also implies that when the owner goes
 out of scope or is otherwise deallocated, the referenced object can be
-deallocated at the same time. Rust takes advantage of this property by
-supporting user-defined destructors, enabling RAII\footnote{%
+deallocated at the same time. Rust leverages the latter property by
+adding support for user-defined destructors, enabling RAII\footnote{%
 RAII: ``Resource Acquisition Is Initialization''}
-patterns popularized by C++.
+patterns as popularized by C++.
 
 There are two flavors of borrows: mutable and immutable.
 Mut\-able references have a uniqueness property:
@@ -90,8 +92,8 @@ most one active mutable borrow of a given piece of state (the owner
 itself is not allowed to mutate the object for the duration of the
 mutable borrow, nor are any of the inactive mutable borrows).
 Immutable references, on the other hand,
-can be freely copied and their referents can be the source for new
-immutable borrows (subject to the restriction that all the borrows
+can be freely copied, and their referents can be the source for new
+immutable borrows (subject to the restriction that all borrows
 still respect the lexical scope of the object's owner).
 
 Rust functions can manipulate objects that are owned by local
@@ -101,14 +103,17 @@ value of {\tt ptr2} into the memory referenced by {\tt ptr1}), but must
 also respect the rules: such assignment statements
 must be prohibited from injecting dangling pointers.
 
-Such functions need explicitly constrain their inputs
-that ensure that their execution will not break the rules.
+A function that manipulates borrowed references needs to
+constrain its input parameters to ensure that
+executing the function body will not break the rules.
 %
 Rust has an optional explicit syntax for describing the {\em lifetime}
-bounds associated with a reference, which mixes with {\em
-  lifetime-polymorphism} (analogous to {\em type-polymorphism}) to
-provide functions the expressive power they need to manipulate
-references, without breaking type safety.
+bounds associated with a reference. Lifetime bounds mix together with
+{\em lifetime-{}polymorphism} (analogous to {\em type-polymorphism})
+to provide functions the expressive power needed to manipulate
+memory references, without breaking type safety.
+
+\section{Demonstration Outline}
 
 Planned topics for the demonstration include:
 \begin{itemize}
@@ -116,7 +121,7 @@ Planned topics for the demonstration include:
 \item Ownership and linear types
 \begin{itemize}
 \item Data Allocation
-\item Deallocation and (user-defined) Destructors
+\item Deallocation and (User-defined) Destructors
 \item Inherited mutability
 \item Moving and sending data
 \end{itemize}
